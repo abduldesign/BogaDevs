@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Student</title>
+    <style>
+        body {
+            background-image: url('background\ login\ 2.jpg');
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+        .container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+            font-size: 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        table td {
+            background-color: #f9f9f9;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delete Student Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Registration Number</th>
+                    <th>Department</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable">
+                <!-- Student rows will be dynamically populated -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        // Default student data
+        const defaultStudents = [
+            { name: "Umar Abdulsalam Barambu", email: "barambu@gmail.com", regno: "78912356", department: "Cybersecurity Manager", course: "DevOps" },
+            { name: "Adama SYLLA", email: "sylla@gmail.com", regno: "43536668", department: "Datascience and A.I", course: "Machine Learning" },
+            { name: "Ofunneka OKONKWOABUTU", email: "okonko@gmail.com", regno: "43463483", department: "Datascience and A.I", course: "Multidisciplinary Project" },
+            { name: "Sani Idris", email: "idris@gmail.com", regno: "43463901", department: "Datascience and A.I", course: "Calculus" },
+            { name: "James Iyo", email: "james@gmail.com", regno: "43467348", department: "Datascience and A.I", course: "Multidisciplinary Project" },
+        ];
+
+        // Load data from LocalStorage or use default
+        const students = JSON.parse(localStorage.getItem("students")) || defaultStudents;
+
+        // Render student table
+        const studentTable = document.getElementById("studentTable");
+        function renderTable() {
+            studentTable.innerHTML = ""; // Clear table
+            students.forEach((student, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.regno}</td>
+                    <td>${student.department}</td>
+                    <td>${student.course}</td>
+                    <td>
+                        <button type="button" class="btn-delete" onclick="deleteStudent(${index})">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                studentTable.appendChild(row);
+            });
+        }
+
+        // Delete student data
+        function deleteStudent(index) {
+            // Confirm deletion
+            const confirmDelete = confirm(`Are you sure you want to delete ${students[index].name}?`);
+            if (confirmDelete) {
+                students.splice(index, 1); // Remove student from array
+                saveToLocalStorage(); // Save updated data
+                renderTable(); // Re-render table
+            }
+        }
+
+        // Save to LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem("students", JSON.stringify(students));
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>

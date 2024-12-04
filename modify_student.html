@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Student</title>
+    <style>
+        body {
+           background-image: url('background\ login\ 2.jpg');
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+        .container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table th, table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+            vertical-align: middle;
+        }
+        table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        table td input {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .btn-modify {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-modify:hover {
+            background: #218838;
+        }
+        .btn-modify:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Modify Student Records</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Registration Number</th>
+                    <th>Department</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="studentTable">
+                <!-- Student rows will be dynamically populated -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        // Default student data
+        const defaultStudents = [
+            { name: "Umar Abdulsalam Barambu", email: "barambu@gmail.com", regno: "78912356", department: "Cybersecurity Manager", course: "DevOps", remaining: 5 },
+            { name: "Adama SYLLA", email: "sylla@gmail.com", regno: "43536668", department: "Datascience and A.I", course: "Machine Learning", remaining: 5 },
+            { name: "Ofunneka OKONKWOABUTU", email: "okonko@gmail.com", regno: "43463483", department: "Datascience and A.I", course: "Multidisciplinary Project", remaining: 5 },
+            { name: "Sani Idris", email: "idris@gmail.com", regno: "43463901", department: "Datascience and A.I", course: "Calculus", remaining: 5 },
+            { name: "James Iyo", email: "james@gmail.com", regno: "43467348", department: "Datascience and A.I", course: "Multidisciplinary Project", remaining: 5 },
+        ];
+
+        // Load data from LocalStorage or use default
+        const students = JSON.parse(localStorage.getItem("students")) || defaultStudents;
+
+        // Render student table
+        const studentTable = document.getElementById("studentTable");
+        function renderTable() {
+            studentTable.innerHTML = ""; // Clear table
+            students.forEach((student, index) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input type="text" value="${student.name}" onchange="updateStudent(${index}, 'name', this.value)" /></td>
+                    <td><input type="email" value="${student.email}" onchange="updateStudent(${index}, 'email', this.value)" /></td>
+                    <td><input type="text" value="${student.regno}" onchange="updateStudent(${index}, 'regno', this.value)" /></td>
+                    <td><input type="text" value="${student.department}" onchange="updateStudent(${index}, 'department', this.value)" /></td>
+                    <td><input type="text" value="${student.course}" onchange="updateStudent(${index}, 'course', this.value)" /></td>
+                    <td>
+                        <button type="button" class="btn-modify" onclick="modifyRow(${index}, this)">
+                            Modify
+                        </button>
+                    </td>
+                `;
+                studentTable.appendChild(row);
+            });
+        }
+
+        // Update student data
+        function updateStudent(index, field, value) {
+            students[index][field] = value;
+            saveToLocalStorage();
+        }
+
+        // Modify row
+        function modifyRow(index, button) {
+            if (students[index].remaining > 0) {
+                students[index].remaining--;
+                alert(`Remaining modifications for this student: ${students[index].remaining}`);
+                if (students[index].remaining === 0) {
+                    button.disabled = true;
+                }
+                saveToLocalStorage();
+            }
+        }
+
+        // Save to LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem("students", JSON.stringify(students));
+        }
+
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>
