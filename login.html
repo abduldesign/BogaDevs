@@ -5,6 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -18,40 +89,88 @@
                     <option value="admin">Admin</option>
                 </select>
             </div>
-            <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-            </div>
+            <div id="dynamicFields"></div>
             <button type="submit" class="btn">Login</button>
         </form>
-       
+        <p class="error-message" id="errorMessage">Invalid credentials. Please try again.</p>
     </div>
+
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
+        const admins = [
+            { name: "Gerad Joseph", id: "BogaDevs13" },
+            { name: "Ommar Kalam", id: "BogaDevs14" }
+        ];
+
+        const students = JSON.parse(localStorage.getItem("students")) || [
+            { name: "Umar Abdulsalam Barambu", email: "barambu@gmail.com" },
+            { name: "Adama SYLLA", email: "sylla@gmail.com" },
+            { name: "Ofunneka OKONKWOABUTU", email: "okonko@gmail.com" },
+            { name: "Sani Idris", email: "idris@gmail.com" },
+            { name: "James Iyo", email: "james@gmail.com" }
+        ];
+
+        // Update the form fields dynamically based on role selection
+        document.getElementById("role").addEventListener("change", function () {
+            const role = this.value;
+            const dynamicFields = document.getElementById("dynamicFields");
+
+            if (role === "student") {
+                dynamicFields.innerHTML = `
+                    <div class="input-group">
+                        <label for="username">Name</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                `;
+            } else if (role === "admin") {
+                dynamicFields.innerHTML = `
+                    <div class="input-group">
+                        <label for="username">Name</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="id">ID</label>
+                        <input type="text" id="id" name="id" placeholder="Enter your ID" required>
+                    </div>
+                `;
+            } else {
+                dynamicFields.innerHTML = "";
+            }
+        });
+
+        // Handle form submission
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault();
 
-            const role = document.getElementById('role').value;
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
+            const role = document.getElementById("role").value;
+            const username = document.getElementById("username").value.trim();
+            let secondField = "";
 
-            if (!role || !username || !password) {
-                alert('Please fill in all fields.');
-                return;
-            }
-
-            // Redirecting based on the selected role
-            if (role === 'student') {
-                alert(`Welcome, ${username}! Redirecting to the Student Dashboard...`);
-                window.location.href = 'student.html'; // Redirecting to student page
-            } else if (role === 'admin') {
-                alert(`Welcome, ${username}! Redirecting to the Admin Dashboard...`);
-                window.location.href = 'admin.html'; // Redirecting to admin page
+            if (role === "student") {
+                secondField = document.getElementById("email").value.trim();
+                const student = students.find(s => s.name === username && s.email === secondField);
+                if (student) {
+                    alert(`Welcome, ${username}! Redirecting to the Student Dashboard...`);
+                    window.location.href = "student.html";
+                } else {
+                    document.getElementById("errorMessage").textContent = "Student does not exist.";
+                    document.getElementById("errorMessage").style.display = "block";
+                }
+            } else if (role === "admin") {
+                secondField = document.getElementById("id").value.trim();
+                const admin = admins.find(a => a.name === username && a.id === secondField);
+                if (admin) {
+                    alert(`Welcome, ${username}! Redirecting to the Admin Dashboard...`);
+                    window.location.href = "admin_login.html";
+                } else {
+                    document.getElementById("errorMessage").textContent = "Admin does not exist.";
+                    document.getElementById("errorMessage").style.display = "block";
+                }
             } else {
-                alert('Invalid role selected.');
+                alert("Invalid role selected.");
             }
         });
     </script>
