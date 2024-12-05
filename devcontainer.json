@@ -1,0 +1,17 @@
+{
+	"name": "Debian PHP & MySQL Dev Container",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
+	"forwardPorts": [
+	  8082,
+	  3308
+	],
+	"features": {
+	  "ghcr.io/devcontainers/features/common-utils:2": {},
+	  "ghcr.io/devcontainers/features/php:1": {},
+	  "ghcr.io/devcontainers/features/node:1": {}
+	},
+	"postCreateCommand": "php -S 0.0.0.0:8082 -t /workspace"
+  }
+  

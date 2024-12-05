@@ -1,0 +1,31 @@
+services:
+  app:
+    image: php:8.2-apache  # Use a PHP + Apache image
+    container_name: web-container
+    ports:
+      - "8082:80"  # Map container port 80 to host port 8082
+    volumes:
+      - ..:/var/www/html  # Mount your project files to the Apache web root
+    environment:
+      MYSQL_HOST: db
+      MYSQL_USER: website_user
+      MYSQL_PASSWORD: website_password
+      MYSQL_DATABASE: website_db
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    container_name: db-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: website_db
+      MYSQL_USER: website_user
+      MYSQL_PASSWORD: website_password
+    ports:
+      - "3308:3306"  # Map container port 3306 to host port 3308
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
